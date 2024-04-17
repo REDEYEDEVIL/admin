@@ -16,6 +16,9 @@
         <li class="nav-item">
           <router-link to="/attendance">AttendancePage</router-link>
         </li>
+         <li class="nav-item">
+          <router-link to="/attendanceview">AttendanceView</router-link>
+        </li>
       </ul>
     </div>
   </div>

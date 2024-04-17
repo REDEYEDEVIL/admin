@@ -1,61 +1,51 @@
 <template>
-    <div>
-        <form @submit.prevent="handleSubmit">
-            <label for="timestamp">Timestamp:</label>
-            <input type="text" v-model="formData.timestamp" id="timestamp" required />
-
-            <label for="name">Select your Name:</label>
-            <input type="text" v-model="formData.name" id="name" required />
-
-            <label for="date">Date:</label>
-            <input type="date" v-model="formData.date" id="date" required />
-
-            <label for="status">In / Out:</label>
-            <select v-model="formData.status" id="status" required>
-                <option>In</option>
-                <option>Out</option>
-            </select>
-
-            <button type="submit">Submit</button>
-        </form>
-    </div>
+  <div>
+    <h1>{{ message }}</h1>
+    <form @submit.prevent="handleSubmit">
+      <input type="text" v-model="formData.name" placeholder="Name" required><br><br>
+      <input type="email" v-model="formData.email" placeholder="Email" required><br><br>
+      <input type="tel" v-model="formData.phone" placeholder="Phone"><br><br>
+      <input type="submit" :value="submitButtonLabel">
+    </form>
+  </div>
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
-    name: 'AttendancePage',
-    data() {
-        return {
-            formData: {
-                timestamp: '',
-                name: '',
-                date: '',
-                status: '',
-            },
-        };
-    },
-    methods: {
-        async handleSubmit() {
-            try {
-                // Send a POST request to the Apps Script web app URL
-                const response = await axios.post('https://script.google.com/macros/s/AKfycbwYkIc1YOS5-a1JrziVAilZ_J_IrvQPVqBJxWXsk_fBn7vjL8AE3hrQxPxQKpRQyNbA/exec', this.formData);
+  name: 'AttendancePage',
+  data() {
+    return {
+      formData: {
+        name: '',
+        email: '',
+        phone: ''
+      },
+      message: '',
+      submitButtonLabel: 'Submit'
+    };
+  },
+  methods: {
+    handleSubmit() {
+      this.submitButtonLabel = 'Submitting...';
+      const formData = new FormData();
+      formData.append('name', this.formData.name);
+      formData.append('email', this.formData.email);
+      formData.append('phone', this.formData.phone);
 
-                if (response.data.status === 'success') {
-                    alert('Data submitted successfully!');
-                    // Clear the form
-                    this.formData.timestamp = '';
-                    this.formData.name = '';
-                    this.formData.date = '';
-                    this.formData.status = '';
-                } else {
-                    alert('Failed to submit data.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
+      fetch('https://script.google.com/macros/s/AKfycbyc0WzsRSncIAaQ_FVGrIRo2gf4baZLr7CCMFWTyJYTcoaYARFKVnyA7j5Ldaze51KX/exec', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.text())
+      .then(data => {
+        this.message = data;
+        this.submitButtonLabel = 'Submit';
+      });
     }
-}
+  }
+};
 </script>
+
+<style scoped>
+/* Add any styling here */
+</style>
